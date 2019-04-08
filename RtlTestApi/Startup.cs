@@ -37,7 +37,7 @@ namespace RtlTestApi
                 c.SwaggerDoc("v1", new Info
                 {
 
-                    Title = "RTL Test",
+                    Title = "RTL Test API",
                     Description = "Showcase for demonstrating Paul Tak's ASP.NET Core and Azure skills.",
                     Contact = new Contact
                     {
