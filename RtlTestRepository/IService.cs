@@ -7,7 +7,9 @@ namespace RtlTestRepository
 {
     public interface IService
     {
-        Task<IEnumerable<Show>> GetShowsIncludingCast(int skip, int take, CancellationToken cancellationToken);
-        Task CreateOrUpdateShowsIncludingCast(IEnumerable<Show> shows, CancellationToken cancellationToken);
+        Task<IEnumerable<(long TvMazeId, long Updated)>> GetUpdates(CancellationToken cancellationToken);
+        Task<IEnumerable<Show>> GetShows(int skip, int take, CancellationToken cancellationToken);
+        Task CreateShow(Show show, CancellationToken cancellationToken);
+        Task UpdateShow(Show show, CancellationToken cancellationToken);
     }
 }

@@ -14,7 +14,8 @@ namespace TvMazeClient
     {
         readonly HttpClient _client;
         readonly string _baseUri;
-        readonly SemaphoreSlim concurrentCalls = new SemaphoreSlim(1, 1);
+
+        static readonly SemaphoreSlim concurrentCalls = new SemaphoreSlim(1, 1);
 
         const HttpStatusCode TooManyRequests = ((HttpStatusCode)429);
 
@@ -30,82 +31,81 @@ namespace TvMazeClient
 
             try
             {
-                while (true)
+                HttpResponseMessage result = null;
+
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    var response = await _client.GetAsync(requestUri, cancellationToken);
-
-                    if (response.IsSuccessStatusCode)
+                    try
                     {
-                        return response;
-                    }
+                        Debug.WriteLine($"GET {requestUri}");
 
-                    if (response.StatusCode == TooManyRequests)
+                        result = await _client.GetAsync(requestUri, cancellationToken);
+
+                        if (result.StatusCode == TooManyRequests)
+                        {
+                            var millisecondsDelay = 10000;
+
+                            Debug.WriteLine($"Delaying next GET to endpoint with {millisecondsDelay}ms.");
+                            await Task.Delay(millisecondsDelay);
+                            continue;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
                     {
-                        await Task.Delay(10000);
-
-                        continue;
+                        throw new ApplicationException($"Request {requestUri} failed.", ex);
                     }
-
-                    break;
                 }
+
+                return result;
             }
             finally
             {
                 concurrentCalls.Release();
             }
-
-            throw new ApplicationException("Request to TVmaze.com failed. Please retry later.");
         }
 
-        public async Task<IEnumerable<Actor>> GetCast(long showId, CancellationToken cancellationToken)
+        public async Task<Show> GetShow(long showId, CancellationToken cancellationToken)
         {
-            IList<Actor> actors = null;
+            var response = await GetThrottledAsync($"{_baseUri}/shows/{showId}?embed[]=cast", cancellationToken);
 
-            try
+            if (response.IsSuccessStatusCode)
             {
-                var response = await GetThrottledAsync($"{_baseUri}/shows/{showId}/cast", cancellationToken);
+                var content = await response.Content.ReadAsStringAsync();
+                var show = JsonConvert.DeserializeObject<Show>(content);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    actors = JsonConvert.DeserializeObject<List<Actor>>(content);
-                }
-                else if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-
-                }
-
+                return show;
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine("\tERROR {0}", ex.Message);
+                return null;
             }
-
-            return actors;
         }
 
-        public async Task<IEnumerable<Show>> GetShows(long pageIndex, CancellationToken cancellationToken)
+        public async Task<IEnumerable<(long ShowId, long Updated)>> GetUpdates(CancellationToken cancellationToken)
         {
-            IList<Show> shows = null;
+            var result = new List<(long ShowId, long Updated)>();
 
-            try
+            var response = await GetThrottledAsync($"{_baseUri}/updates/shows", cancellationToken);
+
+            if (response.IsSuccessStatusCode)
             {
-                var response = await GetThrottledAsync($"{_baseUri}/shows?page={pageIndex}", cancellationToken);
+                var content = await response.Content.ReadAsStringAsync();
+                var deserialized = JsonConvert.DeserializeObject<Dictionary<string, long>>(content);
 
-                if (response.IsSuccessStatusCode)
+                foreach (var item in deserialized)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    shows = JsonConvert.DeserializeObject<List<Show>>(content);
+                    result.Add((ShowId: long.Parse(item.Key), Updated: item.Value));
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine("\tERROR {0}", ex.Message);
             }
 
-            return shows;
+            return result;
         }
     }
 }

@@ -8,16 +8,24 @@ namespace RtlTestRepository
 {
     public class Mock : IService
     {
-        public async Task CreateOrUpdateShowsIncludingCast(IEnumerable<Show> shows, CancellationToken cancellationToken)
+        public Task CreateShow(Show show, CancellationToken cancellationToken)
         {
-            await Task.Delay(0);
+            throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<Show>> GetShowsIncludingCast(int skip, int take, CancellationToken cancellationToken)
+        public Task<IEnumerable<Show>> GetShows(int skip, int take, CancellationToken cancellationToken)
         {
-            await Task.Delay(0);
+            throw new NotImplementedException();
+        }
 
-            return new List<Show>();
+        public Task<IEnumerable<(long TvMazeId, long Updated)>> GetUpdates(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateShow(Show show, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

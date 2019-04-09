@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RtlTestRepository.Migrations
 {
-    public partial class Create : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,6 +13,8 @@ namespace RtlTestRepository.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    TvMazeId = table.Column<long>(nullable: false),
+                    Updated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -26,9 +28,10 @@ namespace RtlTestRepository.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    TvMazeId = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Birthday = table.Column<string>(nullable: true),
-                    ShowId = table.Column<long>(nullable: true)
+                    ShowId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -38,7 +41,7 @@ namespace RtlTestRepository.Migrations
                         column: x => x.ShowId,
                         principalTable: "Show",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

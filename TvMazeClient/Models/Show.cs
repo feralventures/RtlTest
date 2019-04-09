@@ -28,7 +28,7 @@ namespace TvMazeClient.Models
         public string Status { get; set; }
 
         [JsonProperty("runtime")]
-        public long Runtime { get; set; }
+        public long? Runtime { get; set; }
 
         [JsonProperty("premiered")]
         public string Premiered { get; set; }
@@ -65,5 +65,8 @@ namespace TvMazeClient.Models
 
         [JsonProperty("_links")]
         public Links Links { get; set; }
+
+        [JsonProperty("_embedded")]
+        public Embedded Embedded { get; set; }
     }
 }

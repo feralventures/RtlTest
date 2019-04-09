@@ -23,7 +23,7 @@ namespace RtlTestApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int skip = 0, [FromQuery] int take = 10, CancellationToken cancellationToken = default)
         {
-            var shows = await _service.GetShowsIncludingCast(skip, take, cancellationToken);
+            var shows = await _service.GetShows(skip, take, cancellationToken);
 
             return Ok(shows.Select(s => new
             {

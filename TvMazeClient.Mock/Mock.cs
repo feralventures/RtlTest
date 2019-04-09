@@ -24,30 +24,27 @@ namespace TvMazeClient
             }
         }
 
-        private readonly Dictionary<long, Show[]> shows;
+        private readonly Dictionary<long, Show> shows;
         private readonly Dictionary<long, Actor[]> cast;
 
         public Mock(string baseUri)
         {
-            shows = new Dictionary<long, Show[]>()
+            shows = new Dictionary<long, Show>()
             {
-                { 0, GetResource<Show[]>("TvMazeClient.Mock.Resources.Shows.json") }
+                { 1, GetResource<Show>("TvMazeClient.Mock.Resources.Show_1.json") },
+                { 2, GetResource<Show>("TvMazeClient.Mock.Resources.Show_2.json") },
+                { 3, GetResource<Show>("TvMazeClient.Mock.Resources.Show_3.json") },
+                { 4, GetResource<Show>("TvMazeClient.Mock.Resources.Show_4.json") }
             };
-
-            cast = new Dictionary<long, Actor[]>()
-            {
-                {  1, GetResource<Actor[]>("TvMazeClient.Mock.Resources.Shows_1_Cast.json") },
-                {  2, GetResource<Actor[]>("TvMazeClient.Mock.Resources.Shows_2_Cast.json") }
-            }; 
         }
 
-        public async Task<IEnumerable<Actor>> GetCast(long showId, CancellationToken cancellationToken)
+        public async Task<Show> GetShow(long showId, CancellationToken cancellationToken)
         {
-            Actor[] actors;
+            Show show;
 
-            if (cast.TryGetValue(showId, out actors ))
+            if (shows.TryGetValue(showId, out show))
             {
-                return await Task.FromResult<Actor[]>(actors);
+                return await Task.FromResult<Show>(show);
             }
             else
             {
@@ -55,18 +52,17 @@ namespace TvMazeClient
             }
         }
 
-        public async Task<IEnumerable<Show>> GetShows(long pageIndex, CancellationToken cancellationToken)
+        public async Task<IEnumerable<(long ShowId, long Updated)>> GetUpdates(CancellationToken cancellationToken)
         {
-            Show[] page;
+            await Task.Delay(0);
 
-            if (shows.TryGetValue(pageIndex, out page))
+            return new List<(long ShowId, long Updated)>()
             {
-                return await Task.FromResult<Show[]>(page);
-            }
-            else
-            {
-                return null;
-            }
+                ( ShowId: 1, Updated: 1549572248),
+                ( ShowId: 2, Updated: 1551364282),
+                ( ShowId: 3, Updated: 1534079818),
+                ( ShowId: 4, Updated: 1554788133)
+            };
         }
     }
 }
