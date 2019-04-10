@@ -12,32 +12,58 @@ namespace RtlTestScraper
 {
     public static class RtlTestScraper
     {
+        static readonly TvMazeClient.IService _tvMazeClient = null;
+
+        static RtlTestScraper()
+        {
+            _tvMazeClient = ServiceProvider.GetService<TvMazeClient.IService>();
+        }
+
         [FunctionName("RtlTestScraper")]
         public static async Task Run([TimerTrigger("0 0/5 * * * *")]TimerInfo myTimer, ILogger log, CancellationToken cancellationToken)
         {
-            var tvMazeClient = ServiceProvider.GetService<TvMazeClient.IService>();
+            var workload = await DetermineWorkload(cancellationToken);
+            ProcessWorkload(workload, cancellationToken);
 
-            IEnumerable<(long ShowId, long Updated)> tvMazeUpdates = await tvMazeClient.GetUpdates(cancellationToken);
-            IEnumerable<(long TvMazeId, long Updated)> rtlTestUpdates;
+            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+        }
 
+        private static async Task<IEnumerable<long>> DetermineWorkload(CancellationToken cancellationToken)
+        {
+            List<long> workload = new List<long>();
+
+            IDictionary<long, long> tvMazeUpdates = await _tvMazeClient.GetUpdates(cancellationToken);
+            IDictionary<long, long> rtlTestUpdates = await ServiceProvider.GetService<RtlTestRepository.IService>().GetUpdates(cancellationToken);
+
+            for (var updatesToScan = tvMazeUpdates.AsEnumerable(); (workload.Count() < 100) && updatesToScan.Any(); updatesToScan = updatesToScan.Skip(1))
             {
-                var rtlTestRepository = ServiceProvider.GetService<RtlTestRepository.IService>();
-                rtlTestUpdates = await rtlTestRepository.GetUpdates(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var tvMazeUpdate = updatesToScan.First();
+
+                if (rtlTestUpdates.TryGetValue(tvMazeUpdate.Key, out var updated))
+                {
+                    if (updated < tvMazeUpdate.Value)
+                    {
+                        workload.Add(tvMazeUpdate.Key);
+                    }
+                }
+                else
+                {
+                    workload.Add(tvMazeUpdate.Key);
+                }
             }
 
-            var workload = tvMazeUpdates.GroupJoin(rtlTestUpdates,
-                outerItem => outerItem.ShowId,
-                innerItem => innerItem.TvMazeId,
-                (outerItem, innerSet) => new { outerItem, innerItem = innerSet.SingleOrDefault() })
-                .Where(g => (g.innerItem == default((long TvMazeId, long Updated))) || (g.innerItem.Updated < g.outerItem.Updated))
-                .Take(100)
-                .ToList();
+            return workload;
+        }
 
+        private static void ProcessWorkload(IEnumerable<long> workload, CancellationToken cancellationToken)
+        {
             while (!cancellationToken.IsCancellationRequested)
             {
-                Parallel.ForEach(workload, new ParallelOptions() { CancellationToken = cancellationToken }, async (workloadItem) =>
+                Parallel.ForEach(workload, new ParallelOptions() { CancellationToken = cancellationToken }, async (work) =>
                 {
-                    var s = await tvMazeClient.GetShow(workloadItem.outerItem.ShowId, cancellationToken);
+                    var s = await _tvMazeClient.GetShow(work, cancellationToken);
 
                     var observedShow = new RtlTestRepository.Models.Show
                     {
@@ -56,18 +82,9 @@ namespace RtlTestScraper
 
                     var rtlTestRepository = ServiceProvider.GetService<RtlTestRepository.IService>();
 
-                    if (workloadItem.innerItem == default)
-                    {
-                        await rtlTestRepository.CreateShow(observedShow, cancellationToken);
-                    }
-                    else
-                    {
-                        await rtlTestRepository.UpdateShow(observedShow, cancellationToken);
-                    }
+                    await rtlTestRepository.PersistShow(observedShow, cancellationToken);
                 });
             };
-
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
         }
 
         private static ServiceProvider _serviceProvider = null;
@@ -80,7 +97,7 @@ namespace RtlTestScraper
                 {
                     var services = new ServiceCollection();
 
-                    services.AddTransient<TvMazeClient.IService, TvMazeClient.Service>(sp => new TvMazeClient.Service("http://api.tvmaze.com"));
+                    services.AddSingleton<TvMazeClient.IService, TvMazeClient.Service>(sp => new TvMazeClient.Service("http://api.tvmaze.com"));
                     services.AddTransient<RtlTestRepository.IService, RtlTestRepository.Service>();
                     services.AddDbContext<RtlTestRepository.Context>(options => options.UseSqlServer("Server=tcp:rtltestrepository.database.windows.net,1433;Initial Catalog=RTLTestStorage;Persist Security Info=False;User ID=paultak;Password=Pd3GbCe#=2Img+SHX86Z;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"), ServiceLifetime.Transient);
 

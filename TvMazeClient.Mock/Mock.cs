@@ -52,16 +52,16 @@ namespace TvMazeClient
             }
         }
 
-        public async Task<IEnumerable<(long ShowId, long Updated)>> GetUpdates(CancellationToken cancellationToken)
+        public async Task<IDictionary<long, long>> GetUpdates(CancellationToken cancellationToken)
         {
             await Task.Delay(0);
 
-            return new List<(long ShowId, long Updated)>()
+            return new Dictionary<long, long>()
             {
-                ( ShowId: 1, Updated: 1549572248),
-                ( ShowId: 2, Updated: 1551364282),
-                ( ShowId: 3, Updated: 1534079818),
-                ( ShowId: 4, Updated: 1554788133)
+                { 1, 1549572248 },
+                { 2, 1551364282 },
+                { 3, 1534079818 },
+                { 4, 1554788133 }
             };
         }
     }

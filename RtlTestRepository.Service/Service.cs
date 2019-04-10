@@ -16,12 +16,6 @@ namespace RtlTestRepository
             _context = context;
         }
 
-        public async Task CreateShow(Show show, CancellationToken cancellationToken)
-        {
-            _context.Show.AddRange(show);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-
         public async Task<IEnumerable<Show>> GetShows(int skip, int take, CancellationToken cancellationToken)
         {
             var queryShows = _context.Show.Include(s => s.Cast).OrderBy(s => s.TvMazeId).Skip(skip).Take(take);
@@ -31,7 +25,7 @@ namespace RtlTestRepository
             return shows;
         }
 
-        public async Task<IEnumerable<(long TvMazeId, long Updated)>> GetUpdates(CancellationToken cancellationToken)
+        public async Task<IDictionary<long, long>> GetUpdates(CancellationToken cancellationToken)
         {
             var queryUpdates = _context.Show.Select(s => new
             {
@@ -39,14 +33,13 @@ namespace RtlTestRepository
                 s.Updated
             });
 
-            var updates = (await queryUpdates
-                .ToListAsync(cancellationToken))
-                .Select(u => (u.TvMazeId, u.Updated));
+            var updates = await queryUpdates
+                .ToDictionaryAsync(u => u.TvMazeId, u => u.Updated, cancellationToken);
 
             return updates;
         }
 
-        public async Task UpdateShow(Show show, CancellationToken cancellationToken)
+        public async Task PersistShow(Show show, CancellationToken cancellationToken)
         {
             var queryExistingShows = _context.Show.Where(es => es.TvMazeId == show.TvMazeId).Include(s => s.Cast);
             await queryExistingShows.LoadAsync(cancellationToken);

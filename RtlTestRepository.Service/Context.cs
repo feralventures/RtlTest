@@ -18,6 +18,9 @@ namespace RtlTestRepository
                 .HasKey(s => s.Id);
 
             modelBuilder.Entity<Show>()
+                .HasIndex(s => s.TvMazeId);
+
+            modelBuilder.Entity<Show>()
                 .HasMany<Person>(s => s.Cast)
                 .WithOne(p => p.Show)
                 .HasForeignKey(p => p.ShowId)

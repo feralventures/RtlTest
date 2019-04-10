@@ -8,7 +8,7 @@ namespace RtlTestRepository
 {
     public class Mock : IService
     {
-        public Task CreateShow(Show show, CancellationToken cancellationToken)
+        public Task PersistShow(Show show, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -18,12 +18,7 @@ namespace RtlTestRepository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<(long TvMazeId, long Updated)>> GetUpdates(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateShow(Show show, CancellationToken cancellationToken)
+        public Task<IDictionary<long , long>> GetUpdates(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

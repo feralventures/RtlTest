@@ -85,21 +85,16 @@ namespace TvMazeClient
             }
         }
 
-        public async Task<IEnumerable<(long ShowId, long Updated)>> GetUpdates(CancellationToken cancellationToken)
+        public async Task<IDictionary<long, long>> GetUpdates(CancellationToken cancellationToken)
         {
-            var result = new List<(long ShowId, long Updated)>();
+            Dictionary<long, long> result = null;
 
             var response = await GetThrottledAsync($"{_baseUri}/updates/shows", cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var deserialized = JsonConvert.DeserializeObject<Dictionary<string, long>>(content);
-
-                foreach (var item in deserialized)
-                {
-                    result.Add((ShowId: long.Parse(item.Key), Updated: item.Value));
-                }
+                result = JsonConvert.DeserializeObject<Dictionary<long, long>>(content);
             }
             else
             {
