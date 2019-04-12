@@ -18,7 +18,8 @@ namespace RtlTestRepository
                 .HasKey(s => s.Id);
 
             modelBuilder.Entity<Show>()
-                .HasIndex(s => s.TvMazeId);
+                .HasIndex(s => s.TvMazeId)
+                .IsUnique();
 
             modelBuilder.Entity<Show>()
                 .HasMany<Person>(s => s.Cast)

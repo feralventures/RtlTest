@@ -25,7 +25,6 @@ namespace TvMazeClient
         }
 
         private readonly Dictionary<long, Show> shows;
-        private readonly Dictionary<long, Actor[]> cast;
 
         public Mock(string baseUri)
         {

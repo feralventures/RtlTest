@@ -13,20 +13,23 @@ namespace TvMazeClient
     public class Service : IService
     {
         readonly HttpClient _client;
-        readonly string _baseUri;
+
+        public string BaseUri { get; set; }
+        public int TooManyRequestsDelay { get; set; }
 
         static readonly SemaphoreSlim concurrentCalls = new SemaphoreSlim(1, 1);
 
         const HttpStatusCode TooManyRequests = ((HttpStatusCode)429);
 
-        public Service(string baseUri)
+        public Service()
         {
             _client = new HttpClient();
-            _baseUri = baseUri;
         }
 
-        private async Task<HttpResponseMessage> GetThrottledAsync(string requestUri, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> GetThrottledAsync(string relativeUri, CancellationToken cancellationToken)
         {
+            var requestUri = $"{BaseUri}/{relativeUri}";
+
             await concurrentCalls.WaitAsync();
 
             try
@@ -43,7 +46,7 @@ namespace TvMazeClient
 
                         if (result.StatusCode == TooManyRequests)
                         {
-                            var millisecondsDelay = 10000;
+                            var millisecondsDelay = TooManyRequestsDelay;
 
                             Debug.WriteLine($"Delaying next GET to endpoint with {millisecondsDelay}ms.");
                             await Task.Delay(millisecondsDelay);
@@ -70,7 +73,7 @@ namespace TvMazeClient
 
         public async Task<Show> GetShow(long showId, CancellationToken cancellationToken)
         {
-            var response = await GetThrottledAsync($"{_baseUri}/shows/{showId}?embed[]=cast", cancellationToken);
+            var response = await GetThrottledAsync($"shows/{showId}?embed[]=cast", cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
@@ -89,7 +92,7 @@ namespace TvMazeClient
         {
             Dictionary<long, long> result = null;
 
-            var response = await GetThrottledAsync($"{_baseUri}/updates/shows", cancellationToken);
+            var response = await GetThrottledAsync($"updates/shows", cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {

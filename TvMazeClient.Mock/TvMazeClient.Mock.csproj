@@ -17,9 +17,6 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Resources\Shows_1_Cast.json" />
     <None Remove="Resources\Shows_2_Cast.json" />
     <None Remove="Resources\Shows.json" />
@@ -33,5 +30,8 @@
     <EmbeddedResource Include="Resources\Updates_Shows.json" />
     <EmbeddedResource Include="Resources\Show_3.json" />
     <EmbeddedResource Include="Resources\Show_4.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 </Project>

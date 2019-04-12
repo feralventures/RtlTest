@@ -29,7 +29,6 @@ namespace RtlTestApi
         {
             services.AddTransient<RtlTestRepository.IService, RtlTestRepository.Service>();
             services.AddDbContext<RtlTestRepository.Context>(options => options.UseSqlServer(Configuration.GetConnectionString("RtlTestRepositoryConnectionString")));
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSwaggerGen(c =>

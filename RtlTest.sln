@@ -15,7 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtlTestRepository.Service",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtlTestApi", "RtlTestApi\RtlTestApi.csproj", "{D6859C37-29BE-4B71-B463-015BC8DCEAC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtlTestScraper", "RtlTestScraper\RtlTestScraper.csproj", "{26692048-E54E-43E9-85DC-AFF23863910E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtlTestLogic", "RtlTestLogic\RtlTestLogic.csproj", "{A36B9C4B-E8A7-4A9A-AEF3-6CD868F74059}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtlTestLogic.Service", "RtlTestLogic.Service\RtlTestLogic.Service.csproj", "{FC5FCA20-E393-4D1B-A527-173FAECC4F55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtlTestFunctionApp", "RtlTestFunctionApp\RtlTestFunctionApp.csproj", "{1D94AC89-ED3F-49A6-9770-928672374C85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,9 +55,17 @@ Global
 		{D6859C37-29BE-4B71-B463-015BC8DCEAC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6859C37-29BE-4B71-B463-015BC8DCEAC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6859C37-29BE-4B71-B463-015BC8DCEAC8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26692048-E54E-43E9-85DC-AFF23863910E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26692048-E54E-43E9-85DC-AFF23863910E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26692048-E54E-43E9-85DC-AFF23863910E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26692048-E54E-43E9-85DC-AFF23863910E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A36B9C4B-E8A7-4A9A-AEF3-6CD868F74059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A36B9C4B-E8A7-4A9A-AEF3-6CD868F74059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A36B9C4B-E8A7-4A9A-AEF3-6CD868F74059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A36B9C4B-E8A7-4A9A-AEF3-6CD868F74059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC5FCA20-E393-4D1B-A527-173FAECC4F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC5FCA20-E393-4D1B-A527-173FAECC4F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC5FCA20-E393-4D1B-A527-173FAECC4F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC5FCA20-E393-4D1B-A527-173FAECC4F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D94AC89-ED3F-49A6-9770-928672374C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D94AC89-ED3F-49A6-9770-928672374C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D94AC89-ED3F-49A6-9770-928672374C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D94AC89-ED3F-49A6-9770-928672374C85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

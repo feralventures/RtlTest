@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>RtlTestLogic</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RtlTestLogic\RtlTestLogic.csproj" />
+    <ProjectReference Include="..\RtlTestRepository\RtlTestRepository.csproj" />
+    <ProjectReference Include="..\TvMazeClient\TvMazeClient.csproj" />
+  </ItemGroup>
+</Project>
